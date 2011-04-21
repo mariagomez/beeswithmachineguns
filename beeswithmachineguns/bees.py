@@ -189,7 +189,7 @@ def _attack(params):
             username=params['username'],
             key_filename=_get_pem_path(params['key_name']))
 
-        print 'Bee %i is firing his machine gun. Bang bang!' % params['i']
+        print 'Bee %i is firing his machine gun. Bang bang! (%s)' % (params['i'], params['url'])
 
         stdin, stdout, stderr = client.exec_command('ab -r -n %(num_requests)s -c %(concurrent_requests)s -C "sessionid=NotARealSessionID" "%(url)s"' % params)
 
@@ -314,12 +314,13 @@ def attack(url, n, c):
 
     params = []
 
+    urls = url.split(",")
     for i, instance in enumerate(instances):
         params.append({
             'i': i,
             'instance_id': instance.id,
             'instance_name': instance.public_dns_name,
-            'url': url,
+            'url': urls[i % len(urls)],
             'concurrent_requests': connections_per_instance,
             'num_requests': requests_per_instance,
             'username': username,
